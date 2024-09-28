@@ -233,4 +233,4 @@ def searchad(request_body: SearchAdRequest):
         return JSONResponse(status_code=500, content={ 'message': False, 'error': str(e), 'code': 5 })
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port = 5050)
+    uvicorn.run(app, host="0.0.0.0", port = 7001)
