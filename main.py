@@ -1,5 +1,6 @@
 import uvicorn
 import platform
+import os
 import time
 import pyperclip
 import requests
@@ -18,18 +19,22 @@ app = FastAPI()
 
 def driverInit():
     try:
-        options = webdriver.ChromeOptions()
-        # options.add_argument('headless')
-        # options.add_argument("no-sandbox")
-        # options.add_argument('window-size=1920x1080')
-        # options.add_argument("disable-gpu")
-        # options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        operaitor = platform.system()
-        if (operaitor == 'Windows'):
-            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        elif (operaitor == 'Linux'):
-            driver = webdriver.Chrome(options=options)
+        # options = webdriver.ChromeOptions()
+        # # options.add_argument('headless')
+        # # options.add_argument("no-sandbox")
+        # # options.add_argument('window-size=1920x1080')
+        # # options.add_argument("disable-gpu")
+        # # options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        # operaitor = platform.system()
+        # if (operaitor == 'Windows'):
+        #     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        # elif (operaitor == 'Linux'):
+        #     driver = webdriver.Chrome(options=options)
 
+        options = webdriver.ChromeOptions()
+        driver_path = ChromeDriverManager().install()
+        correct_driver_path = os.path.join(os.path.dirname(driver_path), "chromedriver.exe")
+        driver = webdriver.Chrome(service=Service(executable_path=correct_driver_path), options=options)
         return driver
 
     except Exception as e:
@@ -80,7 +85,8 @@ def login_searchad(driver, ID, PW, isNaver):
 
         if (isNaver): # 네이버 계정으로 로그인
             login_btn = driver.find_element(By.CSS_SELECTOR, '.naver_login_btn')
-            login_btn.click()
+            # login_btn.click()
+            driver.execute_script("arguments[0].click();", login_btn)
             time.sleep(uniform(3.0, 5.0))
 
             tabs = driver.window_handles
@@ -159,9 +165,8 @@ def scrap_searchad(driver):
         digit = ""
         for idx, biz in enumerate(biz_money):
             digit = digit + biz.get_attribute('innerText')
-            print('scrap...', digit)
 
-        time.sleep(uniform(1.0, 2.0))
+        time.sleep(uniform(3.0, 5.0))
 
         return digit
 
@@ -201,7 +206,6 @@ def searchad(request_body: SearchAdRequest):
         ID = request_body.id
         PW = request_body.pw
         isNaver = request_body.isNaver
-
         
         login = False
         login = login_searchad(driver, ID, PW, isNaver)
