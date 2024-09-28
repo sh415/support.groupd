@@ -176,7 +176,7 @@ def scrap_searchad(driver):
 
 @app.get("/")
 def read_root():
-    return {"server": "FastAPI uvicorn"}
+    return {"server": "support.groupd alive..."}
     
 @app.post("/responses")
 async def send_response():
